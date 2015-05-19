@@ -1,0 +1,104 @@
+#!/usr/bin/env ruby
+require 'date'
+
+class Clock
+    def start
+        if (!@panel)
+            @panel = Panel.new
+        end
+
+        h = checkTime(Time.now.hour)
+        m = checkTime(Time.now.min)
+        s = Time.now.sec
+        s_str = checkTime(s)
+
+        @panel.draw
+
+        puts h+':'+m+":"+s_str
+        sleep(60-s)
+        start()
+    end
+
+    # Add 0 when number is smaller then 10
+    def checkTime(i)
+        if (i<10); i = "0" + i.to_s end
+        return i.to_s
+    end
+
+    def getClock
+        h = checkTime(Time.now.hour)
+        m = checkTime(Time.now.min)
+        return h+':'+m
+    end
+end
+
+class Panel
+
+    @workspaceNumber = 0
+    def draw
+        bspc = open '|bspc control --subscribe', 'r'
+        countWorkspaces()
+        input = '^p(+5)^fg(#FFFFFF)^r(1x25)'
+        (1..@workspaceNumber).each do |i|
+            if(i > 9)
+                input += '^fg(#FFFFFF)^p(+2)'+i.to_s+'^p(+2)^r(1x25)'
+            else
+                input += '^fg(#FFFFFF)^p(+5)'+i.to_s+'^p(+5)^r(1x25)'
+            end
+        end
+
+        @dzen = open "|dzen2 -ta l -bg '#181512' -h 25 -fn 'Droid Sans Mono-8'", 'w+'
+
+        # Workspaces
+        @dzen.write input
+
+        # Clock
+        cclock = Clock. new
+        clock = cclock.getClock
+        @dzen.write '^pa(1870;6)'+clock
+
+        # Current workspace
+        pos_x = (6*22)+6
+        @dzen.write '^ib(1)^pa('+pos_x.to_s+';22)^fg(#AE986A)^r(7x2)'
+
+
+        @dzen.puts
+    end
+
+    def countWorkspaces
+        count = 0
+        `bspc query -D`.each_line{ count += 1 }
+        @workspaceNumber = count
+    end
+end
+
+clock = Clock. new
+clock.start
+
+# 5 vs 12
+# 14
+
+#echo "\
+#^p(+5)\
+#^fg(#FFFFFF) 1 \
+#\
+#^fg(#FFFFFF) 2 \
+#\
+#^fg(#FFFFFF) 3 \
+#\
+#^fg(#666666) 4 \
+#\
+#^fg(#666666) 5 \
+#\
+#^ib(1)\
+#^fg(#AE986A)\
+#^pa(5;22)\
+#^r(15x2)\
+#\
+#^pa(1870;6)\
+#^ib(1)\
+#^bg(#181512)\
+#^fg(#FFFFFF)\
+#"$(date +"%H : %M") | dzen2 -p -ta l -bg "#181512" -fn "Terminus-8" -h 25
+#
+##^bg(#23211f)\
