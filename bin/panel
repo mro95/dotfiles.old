@@ -38,13 +38,14 @@ class Panel
     def draw
         bspc = open '|bspc control --subscribe', 'r'
         countWorkspaces()
-        input = '^p(+5)^fg(#FFFFFF)^r(1x25)'
+        input = '^pa(5;6)^fg(#FFFFFF)^r(1x12)'
         (1..@workspaceNumber).each do |i|
-            if(i > 9)
-                input += '^fg(#FFFFFF)^p(+2)'+i.to_s+'^p(+2)^r(1x25)'
+            if(i == 10)
+                input += '^fg(#FFFFFF)^p(+5)0^p(+5)'
             else
-                input += '^fg(#FFFFFF)^p(+5)'+i.to_s+'^p(+5)^r(1x25)'
+                input += '^fg(#FFFFFF)^p(+5)'+i.to_s+'^p(+5)'
             end
+            #input += '^r(1x12)'
         end
 
         @dzen = open "|dzen2 -ta l -bg '#181512' -h 25 -fn 'Droid Sans Mono-8'", 'w+'
