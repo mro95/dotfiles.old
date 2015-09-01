@@ -1,29 +1,30 @@
 #! /bin/sh
 
 # Set path etc.
-#source ~/.zshenv
+source ~/.zshenv
 
 
 # Configure monitors
-if xrandr -q | grep 'DVI-I-1 connected'; then
-    xrandr --output DVI-I-1 --primary
+if xrandr -q | grep 'HDMI-0 connected'; then
+    xrandr --output HDMI-0 --primary
 fi
 
 
 # Configure X environment
-feh --bg-scale ~/Pictures/Wallpapers/coolwallpaper.jpg &
+feh --bg-scale ~/Pictures/Wallpapers/wallpaper4.png &
 compton &
 xrdb ~/.Xresources &
 xsetroot -cursor_name left_ptr &
 xmodmap ~/.xmodmap &
-panel &
+#panel &
 xset r rate 250 25 &
 for n in {8..12}; do xinput set-prop $n "Device Accel Constant Deceleration" 2.2; done # I don't even care
+vpsnotifyc &
 
 sxhkd -r 50 &
 
-bspc config border_width        2
-bspc config window_gap         10
+bspc config border_width        1
+bspc config window_gap         20
 
 bspc config focused_border_color '#505860'
 bspc config active_border_color  '#102030'
@@ -37,7 +38,7 @@ bspc config gapless_monocle      true
 bspc config focus_by_distance    true
 bspc config focus_follows_cursor true
 
-monitors=( 'DVI-I-1' ) # order is important
+monitors=( 'HDMI-0' 'DVI-I-1' ) # order is important
 i=1
 for m in ${monitors[@]}; do
     if bspc query -M | grep "$m"; then

@@ -1,0 +1,7 @@
+#!/usr/bin/bash
+
+ssh vps 'echo "start of notifications" > /tmp/notifications'
+
+ssh vps tail -f /tmp/notifications | while read line; do
+    echo $line | tr '\01' '\n' | xargs -d'\n' notify-send
+done

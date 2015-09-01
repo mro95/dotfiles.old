@@ -19,7 +19,6 @@ class Clock
         start()
     end
 
-    # Add 0 when number is smaller then 10
     def checkTime(i)
         if (i<10); i = "0" + i.to_s end
         return i.to_s
@@ -38,7 +37,8 @@ class Panel
     def draw
         bspc = open '|bspc control --subscribe', 'r'
         countWorkspaces()
-        input = '^pa(5;6)^fg(#FFFFFF)^r(1x12)'
+        #input = '^pa(5;6)^fg(#FFFFFF)^r(1x12)'
+        input = '^pa(5;6)'
         (1..@workspaceNumber).each do |i|
             if(i == 10)
                 input += '^fg(#FFFFFF)^p(+5)0^p(+5)'
@@ -48,7 +48,9 @@ class Panel
             #input += '^r(1x12)'
         end
 
-        @dzen = open "|dzen2 -ta l -bg '#181512' -h 25 -fn 'Droid Sans Mono-8'", 'w+'
+        if(!@dzen)
+            @dzen = open "|dzen2 -ta l -bg '#181512' -h 25 -fn 'Droid Sans Mono-8'", 'w+'
+        end
 
         # Workspaces
         @dzen.write input
@@ -59,7 +61,7 @@ class Panel
         @dzen.write '^pa(1870;6)'+clock
 
         # Current workspace
-        pos_x = (6*22)+6
+        pos_x = (0*22)+6
         @dzen.write '^ib(1)^pa('+pos_x.to_s+';22)^fg(#AE986A)^r(7x2)'
 
 
